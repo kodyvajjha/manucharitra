@@ -1,0 +1,1171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px) }
+body { margin: 0; font: 14px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif }
+img { max-width: 100% }
+[hidden] { display: none !important }
+</style>
+<title>Manucharitramu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Peddana&family=Tiro+Telugu:ital@0;1&family=Gentium+Book+Plus:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: a kalamkari cloth — a madder-and-indigo title band, then each verse laid
+   out as a folio: Telugu on the left, word-by-word gloss on the right, rendering beneath.
+   The recitation bar is a second strip of the same cloth pinned to the foot of the screen. */
+:root {
+  --cloth: #f1efe8;      /* unbleached cotton */
+  --cloth-2: #e6e2d5;    /* a deeper fold */
+  --ink: #1f1b17;        /* iron-black kalamkari outline */
+  --ink-soft: #5b544b;
+  --indigo: #283a72;
+  --madder: #a3352a;
+  --myrobalan: #8a6a1f;  /* the yellow mordant */
+  --rule: #cfc8b6;
+  --band: #283a72;
+  --band-ink: #f1efe8;
+  --te: "Tiro Telugu", "Noto Serif Telugu", "Gautami", serif;
+  --te-display: "Peddana", "Tiro Telugu", "Noto Serif Telugu", serif;
+  --en: "Gentium Book Plus", "Gentium Plus", "Iowan Old Style", Georgia, serif;
+  --step--1: .875rem; --step-0: 1.0625rem; --step-1: 1.25rem; --step-2: 1.6rem; --step-3: 2.4rem; --step-4: 3.6rem;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --cloth: #11152a; --cloth-2: #1a2040; --ink: #e8e3d6; --ink-soft: #a9a394;
+  --indigo: #a9b9ee; --madder: #e5826d; --myrobalan: #d6b66a; --rule: #2e355a;
+  --band: #1a2350; --band-ink: #ece6d6; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --cloth: #11152a; --cloth-2: #1a2040; --ink: #e8e3d6; --ink-soft: #a9a394;
+  --indigo: #a9b9ee; --madder: #e5826d; --myrobalan: #d6b66a; --rule: #2e355a;
+  --band: #1a2350; --band-ink: #ece6d6; color-scheme: dark }
+
+* { box-sizing: border-box }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--bar-h, 5.5rem) + env(safe-area-inset-top, 0px) + .75rem) }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto } }
+body { background: var(--cloth); color: var(--ink); font-family: var(--en); font-size: var(--step-0); line-height: 1.6;
+  -webkit-font-smoothing: antialiased }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--band) }
+.wrap { max-width: 76rem; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+a { color: var(--indigo) }
+:focus-visible { outline: 2px solid var(--madder); outline-offset: 3px }
+
+/* title band, with a block-printed border drawn in CSS */
+.band { background: var(--band); color: var(--band-ink); position: relative }
+.band::after { content: ""; display: block; height: 14px;
+  background:
+    radial-gradient(circle at 7px 7px, var(--madder) 3px, transparent 3.5px) 0 0 / 28px 14px,
+    radial-gradient(circle at 21px 7px, var(--band-ink) 1.6px, transparent 2px) 0 0 / 28px 14px,
+    var(--band); border-top: 1px solid color-mix(in srgb, var(--band-ink) 30%, transparent) }
+.band .wrap { padding-block: 2.6rem 2rem; display: grid; gap: .4rem }
+.band h1 { margin: 0; font-family: var(--te-display); font-weight: 400; font-size: var(--step-4); line-height: 1.25; text-wrap: balance }
+.band .sub { font-size: var(--step-1); font-style: italic; opacity: .92 }
+.band .by { font-size: var(--step--1); letter-spacing: .12em; text-transform: uppercase; opacity: .75 }
+
+/* sticky canto bar */
+.bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: color-mix(in srgb, var(--cloth) 94%, transparent);
+  backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule) }
+.bar .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem 1rem; padding-block: .6rem }
+.cantos { display: flex; gap: .25rem; flex-wrap: wrap; flex: 1 1 auto; min-width: 0 }
+.cantos button { font: inherit; font-family: var(--te); font-size: var(--step--1); color: var(--ink-soft); background: none;
+  border: 1px solid transparent; border-radius: 3px; padding: .3rem .6rem; cursor: pointer }
+.cantos button:hover { color: var(--ink); border-color: var(--rule) }
+.cantos button[aria-current="true"] { color: var(--band-ink); background: var(--band); border-color: var(--band) }
+.cantos button[disabled] { opacity: .4; cursor: default }
+.tools { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap }
+.tools label { font-size: var(--step--1); color: var(--ink-soft); display: flex; gap: .35rem; align-items: center; cursor: pointer }
+.tools input[type="number"] { width: 4.2rem; font: inherit; font-size: var(--step--1); padding: .2rem .4rem; background: var(--cloth);
+  color: var(--ink); border: 1px solid var(--rule); border-radius: 3px; font-variant-numeric: tabular-nums }
+.tools input[type="search"] { width: 11rem; max-width: 100%; font: inherit; font-size: var(--step--1); padding: .25rem .5rem; background: var(--cloth);
+  color: var(--ink); border: 1px solid var(--rule); border-radius: 3px }
+
+/* canto heading */
+.canto-head { padding-block: 2.5rem 1rem; display: grid; gap: .2rem; border-bottom: 1px solid var(--rule) }
+.canto-head .te { font-family: var(--te-display); font-size: var(--step-3); line-height: 1.3; color: var(--madder) }
+.canto-head .en { font-size: var(--step-2); text-wrap: balance }
+.canto-head .meta { font-size: var(--step--1); color: var(--ink-soft); letter-spacing: .08em; text-transform: uppercase }
+.synopsis { max-width: 44rem; color: var(--ink-soft); font-style: italic; margin: .6rem 0 0 }
+
+/* a folio */
+.section-label { margin: 3rem 0 0; font-size: var(--step--1); letter-spacing: .16em; text-transform: uppercase; color: var(--myrobalan);
+  display: flex; align-items: center; gap: .8rem }
+.section-label::after { content: ""; flex: 1; height: 1px; background: var(--rule) }
+.verse { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 1.2rem 3rem; padding-block: 2.2rem;
+  border-bottom: 1px solid var(--rule) }
+.verse > * { min-width: 0 }
+.vhead { grid-column: 1 / -1; display: flex; align-items: baseline; gap: .8rem; flex-wrap: wrap }
+.num { font-family: var(--te); font-size: var(--step-2); color: var(--madder); line-height: 1; font-variant-numeric: tabular-nums; text-decoration: none }
+.metre { font-family: var(--te); font-size: var(--step--1); color: var(--myrobalan) }
+.who { margin-left: auto; font-size: var(--step--1); color: var(--ink-soft); font-style: italic }
+.padyam { font-family: var(--te); font-size: 1.32rem; line-height: 2; margin: 0; overflow-wrap: anywhere }
+.padyam .ln { display: block; padding-left: 1.6em; text-indent: -1.6em }
+.padyam .tail { margin-top: .9rem }
+.padyam.prose { font-size: 1.15rem; line-height: 2 }
+.pp { margin: 0; display: grid; grid-template-columns: minmax(0, auto) minmax(10rem, 1fr); gap: .3rem 1rem; align-content: start;
+  font-size: .95rem; line-height: 1.45 }
+.pp dt { font-family: var(--te); color: var(--indigo); overflow-wrap: anywhere }
+.pp dd { margin: 0; color: var(--ink) }
+.pp dt:hover, .pp dt:hover + dd { background: var(--cloth-2) }
+.render { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); gap: 1rem 3rem }
+.render > * { min-width: 0 }
+.tr { margin: 0; font-size: var(--step-1); line-height: 1.6; max-width: 40rem }
+.tr p { margin: 0 0 .7rem }
+.notes { font-size: .95rem; color: var(--ink-soft); line-height: 1.55 }
+.notes h4 { margin: 0 0 .3rem; font-size: var(--step--1); font-weight: 400; letter-spacing: .14em; text-transform: uppercase; color: var(--myrobalan) }
+.notes p { margin: 0 0 .5rem }
+body.nopp .pp { display: none }
+body.nopp .verse { grid-template-columns: minmax(0, 1fr) }
+body.nopp .render { grid-template-columns: minmax(0, 1fr) }
+.verse.hit .padyam { background: linear-gradient(transparent 60%, color-mix(in srgb, var(--myrobalan) 18%, transparent) 0) }
+.verse:target .num { text-decoration: underline; text-underline-offset: 6px }
+.empty { padding-block: 4rem; color: var(--ink-soft); font-style: italic }
+footer { padding-block: 3rem 4rem; color: var(--ink-soft); font-size: var(--step--1); border-top: 1px solid var(--rule); margin-top: 3rem }
+footer p { max-width: 44rem; margin: 0 0 .6rem }
+
+/* recitation: the button on each verse, the line being spoken, and the bar at the foot */
+.recite { display: inline-flex; align-items: center; gap: .4rem; margin-left: auto; align-self: center;
+  font: inherit; font-size: var(--step--1); color: var(--madder); background: none; border: 1px solid var(--rule);
+  border-radius: 3px; padding: .25rem .7rem; cursor: pointer }
+.who + .recite { margin-left: 0 }
+.recite svg { width: .7em; height: .7em; fill: currentColor }
+.recite:hover { border-color: var(--madder) }
+.recite[aria-pressed="true"] { background: var(--madder); border-color: var(--madder); color: var(--cloth) }
+
+.padyam .u { border-radius: 2px; -webkit-box-decoration-break: clone; box-decoration-break: clone;
+  transition: background-color .25s, box-shadow .25s }
+.padyam .u.say { background: color-mix(in srgb, var(--madder) 15%, transparent);
+  box-shadow: 0 0 0 .18em color-mix(in srgb, var(--madder) 15%, transparent) }
+.padyam .u.echo { background: color-mix(in srgb, var(--indigo) 14%, transparent);
+  box-shadow: 0 0 0 .18em color-mix(in srgb, var(--indigo) 14%, transparent) }
+@media (prefers-reduced-motion: reduce) { .padyam .u { transition: none } }
+
+.player { position: fixed; left: 0; right: 0; bottom: 0; z-index: 8; background: var(--band); color: var(--band-ink);
+  padding-bottom: env(safe-area-inset-bottom, 0px) }
+.player::before { content: ""; display: block; height: 10px;
+  background:
+    radial-gradient(circle at 5px 5px, var(--madder) 2.4px, transparent 2.9px) 0 0 / 20px 10px,
+    radial-gradient(circle at 15px 5px, var(--band-ink) 1.2px, transparent 1.6px) 0 0 / 20px 10px,
+    var(--band); border-top: 1px solid color-mix(in srgb, var(--band-ink) 30%, transparent) }
+.player :focus-visible { outline-color: var(--band-ink) }
+.pl-bar { height: 3px; background: color-mix(in srgb, var(--band-ink) 20%, transparent) }
+.pl-bar i { display: block; height: 100%; width: 0; background: var(--band-ink) }
+.pl-in { max-width: 76rem; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)) }
+.pl-row { display: flex; align-items: center; gap: .5rem 1rem; flex-wrap: wrap; padding-block: .55rem .7rem }
+.pl-now { flex: 1 1 9rem; min-width: 0; display: grid; gap: .05rem }
+.pl-verse { font-family: var(--te); font-size: var(--step-0); line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.pl-line { font-size: var(--step--1); opacity: .85; font-variant-numeric: tabular-nums }
+.pl-ctl { display: flex; align-items: center; gap: .3rem }
+.pl-btn { display: inline-grid; place-items: center; min-width: 2.6rem; height: 2.6rem; padding: 0 .55rem; font: inherit; font-size: var(--step--1);
+  color: var(--band-ink); background: none; border: 1px solid color-mix(in srgb, var(--band-ink) 35%, transparent); border-radius: 3px; cursor: pointer }
+.pl-btn svg { width: 1.05rem; height: 1.05rem; fill: currentColor }
+.pl-btn:hover:not(:disabled) { border-color: var(--band-ink) }
+.pl-btn:disabled { opacity: .4; cursor: default }
+.pl-btn[aria-expanded="true"] { background: color-mix(in srgb, var(--band-ink) 14%, transparent) }
+.pl-main { min-width: 3rem; height: 3rem; background: var(--band-ink); color: var(--band); border-color: var(--band-ink) }
+.pl-panel { border-top: 1px solid color-mix(in srgb, var(--band-ink) 20%, transparent) }
+.pl-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: .65rem 1.75rem; padding-block: .8rem 1rem; font-size: var(--step--1) }
+.pl-f { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap }
+.pl-c { display: flex; align-items: flex-start; gap: .55rem; line-height: 1.45 }
+.pl-c input { margin: .2rem 0 0 }
+.pl-grid select { font: inherit; color: var(--band-ink); background: var(--band); max-width: 100%;
+  border: 1px solid color-mix(in srgb, var(--band-ink) 35%, transparent); border-radius: 3px; padding: .2rem .4rem }
+.pl-grid input { accent-color: var(--madder) }
+.pl-grid input[type="range"] { flex: 1 1 6rem; min-width: 0 }
+.pl-grid output { min-width: 3.2em; font-variant-numeric: tabular-nums }
+.pl-msg { font-size: var(--step--1); line-height: 1.5; padding-block: .6rem 0; max-width: 46rem }
+.pl-msg button { margin-left: .4rem; font: inherit; color: var(--band); background: var(--band-ink); border: 0; border-radius: 3px; padding: .15rem .6rem; cursor: pointer }
+body.has-player footer { padding-bottom: calc(4rem + var(--pl-h, 8rem)) }
+
+/* study tools: metre marks and the memory drill, both off until chosen under Study */
+[hidden] { display: none !important }
+.study-btn { font: inherit; font-size: var(--step--1); color: var(--ink-soft); background: none; border: 1px solid var(--rule);
+  border-radius: 3px; padding: .25rem .65rem; cursor: pointer }
+.study-btn:hover { color: var(--ink) }
+.study-btn[aria-expanded="true"] { color: var(--band-ink); background: var(--band); border-color: var(--band) }
+.study { flex: 1 1 100%; display: grid; gap: .55rem; padding-block: .1rem .45rem; font-size: var(--step--1); color: var(--ink-soft); max-width: 48rem }
+.study label { display: flex; gap: .6rem; align-items: flex-start; line-height: 1.45; cursor: pointer }
+.study input { margin: .22rem 0 0; accent-color: var(--madder); flex: none }
+.study .k { color: var(--ink) }
+.mpat { font-family: var(--te); font-size: var(--step--1); color: var(--ink-soft) }
+body:not(.marks) .mpat { display: none }
+
+body.marks .padyam:not(.prose) { line-height: 3 }
+body.marks .padyam .ak, body.marks .padyam .sp { position: relative }
+body.marks .padyam .ak::before { content: attr(data-w); position: absolute; left: 0; right: 0; bottom: 100%; margin-bottom: .3em; text-align: center; text-indent: 0;
+  font: 700 .54em/1 var(--en); color: var(--myrobalan); pointer-events: none }
+body.marks .padyam .g::after { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; margin-bottom: .8em;
+  border-top: 1px solid color-mix(in srgb, var(--myrobalan) 55%, transparent); pointer-events: none }
+body.marks .padyam .gs::after { left: .22em }
+body.marks .padyam .yt, body.marks .padyam .yp { text-decoration: underline 2px var(--madder); text-underline-offset: .3em; text-decoration-skip-ink: none }
+body.marks .padyam .pr { color: var(--indigo) }
+body.marks .padyam .raw .ak::before { opacity: .45 }
+
+.drill-btn { display: inline-flex; align-items: center; align-self: center; font: inherit; font-size: var(--step--1); color: var(--indigo);
+  background: none; border: 1px solid var(--rule); border-radius: 3px; padding: .25rem .7rem; cursor: pointer }
+.drill-btn:hover { border-color: var(--indigo) }
+.drill-btn[aria-pressed="true"] { background: var(--indigo); border-color: var(--indigo); color: var(--cloth) }
+.drillbar { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: .35rem }
+.drillbar button { font: inherit; font-size: var(--step--1); color: var(--ink-soft); background: none; border: 1px solid var(--rule);
+  border-radius: 3px; padding: .2rem .6rem; cursor: pointer }
+.drillbar button[aria-pressed="true"] { color: var(--cloth); background: var(--indigo); border-color: var(--indigo) }
+.drillbar .hint { font-size: var(--step--1); color: var(--ink-soft); font-style: italic; margin-left: .25rem }
+.verse.drilling .padyam .u { cursor: pointer }
+.verse.d1 .padyam .ak.wr, .verse.d2 .padyam .ak:not(.l0) { color: transparent;
+  border-bottom: 1px dotted color-mix(in srgb, var(--ink-soft) 55%, transparent) }
+.verse.d2 .padyam .sp, .verse.d3 .padyam .sp, .verse.d3 .padyam .ak { color: transparent }
+.verse.drilling .padyam .u.peek .ak, .verse.drilling .padyam .u.peek .sp { color: var(--ink); border-bottom-color: transparent }
+.verse.d1 .pp dt, .verse.d2 .pp dt, .verse.d3 .pp dt { color: transparent }
+
+@media (max-width: 760px) {
+  :root { --step-4: 2.6rem; --step-3: 1.9rem }
+  .verse, .render { grid-template-columns: minmax(0, 1fr); gap: 1rem }
+  .pp { border-top: 1px dashed var(--rule); padding-top: 1rem; grid-template-columns: minmax(0, 1fr); gap: 0 }
+  .pp dt { margin-top: .65rem }
+  .pp dt:first-of-type { margin-top: 0 }
+  .pp dd { padding-left: .9rem }
+  .cantos { flex: 1 1 100%; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none }
+  .cantos::-webkit-scrollbar { display: none }
+  .cantos button { flex: none }
+  .padyam { font-size: 1.2rem }
+  .tools input[type="search"] { width: 9rem }
+}
+@media (max-width: 420px) {
+  .pl-btn { min-width: 2.4rem; height: 2.4rem; padding: 0 .4rem }
+  .pl-main { min-width: 2.8rem; height: 2.8rem }
+}
+</style>
+</head>
+<body>
+<header class="band">
+  <div class="wrap">
+    <div class="by">Allasāni Peddana · Vijayanagara, c. 1520</div>
+    <h1>మనుచరిత్రము</h1>
+    <div class="sub">The Story of Manu, with a word-by-word gloss and an English rendering</div>
+  </div>
+</header>
+
+<nav class="bar" aria-label="Cantos">
+  <div class="wrap">
+    <div class="cantos" id="cantos"></div>
+    <div class="tools">
+      <label for="jump">Verse <input type="number" id="jump" min="1" inputmode="numeric"></label>
+      <input type="search" id="find" placeholder="Search this canto" aria-label="Search this canto">
+      <label for="ppToggle"><input type="checkbox" id="ppToggle" checked> Word by word</label>
+      <button type="button" class="study-btn" id="studyBtn" aria-expanded="false" aria-controls="studyPanel">Study</button>
+    </div>
+    <div class="study" id="studyPanel" hidden>
+      <label for="stMarks"><input type="checkbox" id="stMarks"> <span><span class="k">Metre marks.</span> U over each long syllable and | over each short one, a line over each gaṇa, the yati letters underlined and the prāsa letter in blue.</span></label>
+      <label for="stDrill"><input type="checkbox" id="stDrill"> <span><span class="k">Memory drill.</span> Adds a Drill button to every verse. It fades the Telugu to the first letter of each word, then the first letter of each line, then nothing; tap a line to peek. The Telugu in the word-by-word list hides too.</span></label>
+    </div>
+  </div>
+</nav>
+
+<main class="wrap" id="main"></main>
+
+<footer class="wrap">
+  <p>The Telugu text is Peddana's <i>Svārociṣa-manusambhavamu</i>. Cantos 1–4 were taken from a printed edition and corrected against the text on Telugu Wikisource. Cantos 5 and 6 follow the text published by Andhra Bharati, transcribed twice and the two copies compared, then scanned line by line against the metre; the few places where it has been corrected are marked in the notes. The pratipadārtham splits each verse after sandhi and glosses it phrase by phrase in the order of the Telugu; the rendering below it is freer.</p>
+  <p>Verses 5–7 of the first canto are Koundinya Vajjha's own translation. The rest is new work done for this edition.</p>
+  <p>Recite reads a verse aloud line by line with your device's own Telugu voice. It speaks the words plainly; it does not sing them to a rāgam the way padyams are recited.</p>
+  <p>Study, in the bar at the top, has two optional layers, both off until you turn them on; the page remembers your choice on this device. Metre marks scan every line by rule: U over a long syllable, | over a short one, a line over each gaṇa, the yati letters underlined and the prāsa letter in blue. A line whose marks are faint does not fit its metre as printed. The memory drill fades a verse in stages, to the first letter of each word, then of each line, then nothing, and with metre marks on, the marks stay behind as a skeleton.</p>
+</footer>
+
+<section class="player" id="player" aria-label="Recitation" hidden>
+  <div class="pl-bar" id="plBar" hidden><i></i></div>
+  <div class="pl-in pl-msg" id="plMsg" hidden></div>
+  <div class="pl-in pl-row">
+    <div class="pl-now">
+      <div class="pl-verse" id="plVerse" lang="te"></div>
+      <div class="pl-line" id="plLine" aria-live="polite"></div>
+    </div>
+    <div class="pl-ctl">
+      <button type="button" class="pl-btn" id="plPrev" aria-label="Back one line"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 4h2.2v12H4zM16.5 4v12L7.5 10z"/></svg></button>
+      <button type="button" class="pl-btn pl-main" id="plPlay" aria-label="Pause"></button>
+      <button type="button" class="pl-btn" id="plNext" aria-label="Forward one line"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M13.8 4H16v12h-2.2zM3.5 4v12l9-6z"/></svg></button>
+      <button type="button" class="pl-btn" id="plOpts" aria-expanded="false" aria-controls="plPanel">Options</button>
+      <button type="button" class="pl-btn" id="plClose" aria-label="Stop and close"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5.1 3.7 10 8.6l4.9-4.9 1.4 1.4-4.9 4.9 4.9 4.9-1.4 1.4-4.9-4.9-4.9 4.9-1.4-1.4 4.9-4.9-4.9-4.9z"/></svg></button>
+    </div>
+  </div>
+  <div class="pl-panel" id="plPanel" hidden>
+    <div class="pl-in pl-grid">
+      <label class="pl-f" for="plRate">Speed <input type="range" id="plRate" min="0.5" max="1.3" step="0.05"> <output id="plRateOut" for="plRate"></output></label>
+      <label class="pl-f" for="plRepeat">Say each line
+        <select id="plRepeat"><option value="1">once</option><option value="2">twice</option><option value="3">three times</option></select></label>
+      <label class="pl-f" for="plAfter">At the end of the verse
+        <select id="plAfter"><option value="stop">stop</option><option value="loop">start it again</option><option value="next">go on to the next verse</option></select></label>
+      <label class="pl-f" for="plVoice">Voice <select id="plVoice"></select></label>
+      <label class="pl-c" for="plEcho"><input type="checkbox" id="plEcho"> Leave a pause after each line for me to say it back</label>
+      <label class="pl-c" for="plBuild"><input type="checkbox" id="plBuild"> Build up: line 1, then lines 1–2, then 1–3, and so on</label>
+    </div>
+  </div>
+</section>
+
+<script src="data/index.js"></script>
+<script src="data/canto-1.js"></script>
+<script src="data/canto-2.js"></script>
+<script src="data/canto-3.js"></script>
+<script src="data/canto-4.js"></script>
+<script src="data/canto-5.js"></script>
+<script src="data/canto-6.js"></script>
+<script>
+(function () {
+  const MC = window.MC || {};
+  const INDEX = window.MC_INDEX || [];
+  const TE_NUM = n => String(n).replace(/[0-9]/g, d => "౦౧౨౩౪౫౬౭౮౯"[d]);
+  const SYNOPSES = {
+    1: "Invocations, the king's commission and his lineage. Then the city of Aruṇāspada and the young brahmin Pravara, who longs to see the world and gets a magic foot-ointment from a wandering siddha.",
+    2: "Pravara flies to the Himālaya. The ointment melts in the snow, and he meets the apsaras Varūthinī, who falls in love with him. He refuses her and prays to Agni to bring him home.",
+    3: "Varūthinī's night of longing; a gandharva who desires her takes Pravara's form, wins her on condition that she keep her eyes closed, and leaves her pregnant.",
+    4: "Svarociṣ is born and grows up. He goes hunting and rescues Manoramā from a demon. She gives him the secret of weapons. The demon he kills turns out to be her cursed father, Indīvarākṣa.",
+    5: "Indīvarākṣa tells how he stole the science of medicine from the sage Brahmamitra and was cursed to become a demon. He gives Svarociṣ the Āyurveda and his daughter, and takes him to Mount Mandara, where Svarociṣ and Manoramā are married.",
+    6: "Svarociṣ cures Manoramā's friends and marries them too: Vibhāvasī, who knows the speech of animals, and Kalāvatī, daughter of the sage Pāra, who brings the Padminī lore. A cakravākī and a stag mock his life of pleasure; a doe turns out to be the goddess of the forest, and their son Svārociṣa praises Viṣṇu and is made the second Manu.",
+  };
+
+  const $ = s => document.querySelector(s);
+  const main = $("#main"), cantosEl = $("#cantos");
+  let current = 1;
+
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const paras = s => s.split(/\n+/).map(p => `<p>${esc(p)}</p>`).join("");
+  const PLAY = '<svg viewBox="0 0 10 10" aria-hidden="true"><path d="M2 1l7 4-7 4z"/></svg>';
+
+  // Each recitable unit carries class "u": a whole line of verse, or one phrase of prose.
+  function padyam(v) {
+    const prose = /వచనము|గద్యము|దండకము/.test(v.metre || "");
+    const lines = v.te.map((l, i) => {
+      if (prose) {
+        const phrases = l.replace(/([,;.!?।])\s+/g, "$1\u0000").split("\u0000").filter(Boolean);
+        return `<span class="ln">${phrases.map(p => `<span class="u">${esc(p)}</span>`).join(" ")}</span>`;
+      }
+      const tail = v.metre === "సీసము" && i === 4 ? " tail" : "";
+      return `<span class="ln u${tail}">${esc(l)}</span>`;
+    }).join("");
+    return `<p class="padyam${prose ? " prose" : ""}" lang="te">${lines}</p>`;
+  }
+
+  function verseHTML(c, v) {
+    const pp = v.pp.map(([w, g]) => `<dt lang="te">${esc(w)}</dt><dd>${esc(g)}</dd>`).join("");
+    const notes = v.notes ? `<div class="notes"><h4>Notes</h4>${paras(v.notes)}</div>` : "<div></div>";
+    return `<article class="verse" id="c${c}-${v.n}" data-n="${v.n}">
+      <div class="vhead"><a class="num" href="#c${c}-${v.n}" aria-label="Verse ${v.n}">${TE_NUM(v.n)}</a>
+        <span class="metre" lang="te">${esc(v.metre || "")}</span>
+        ${v.by === "kv" ? '<span class="who">translation by Koundinya Vajjha</span>' : ""}
+        <button type="button" class="recite" aria-pressed="false" aria-label="Recite verse ${v.n}">${PLAY}Recite</button></div>
+      ${padyam(v)}
+      <dl class="pp" aria-label="Word by word">${pp}</dl>
+      <div class="render"><div class="tr">${paras(v.tr)}</div>${notes}</div>
+    </article>`;
+  }
+
+  function renderCanto(c) {
+    current = c;
+    const data = MC[c];
+    [...cantosEl.children].forEach(b => b.setAttribute("aria-current", String(+b.dataset.c === c)));
+    const act = cantosEl.querySelector('[aria-current="true"]');
+    if (act && cantosEl.scrollWidth > cantosEl.clientWidth) cantosEl.scrollLeft = act.offsetLeft - cantosEl.offsetLeft - 16;
+    const meta = INDEX.find(x => x.n === c) || {};
+    let html = `<header class="canto-head"><div class="te" lang="te">${esc(meta.te || "")}</div>
+      <div class="en">${esc(meta.en || "")}: ${esc(meta.sub || "")}</div>
+      <div class="meta">${!data ? "In progress" : (meta.count > data.verses.length ? data.verses.length + " of " + meta.count + " verses so far" : data.verses.length + " verses")}</div>
+      <p class="synopsis">${esc(SYNOPSES[c] || "")}</p></header>`;
+    if (!data) {
+      html += `<p class="empty">This canto is still being translated.</p>`;
+    } else {
+      for (const v of data.verses) {
+        if (v.section) html += `<h3 class="section-label">${esc(v.section)}</h3>`;
+        html += verseHTML(c, v);
+      }
+    }
+    main.innerHTML = html;
+    $("#jump").max = data ? data.verses[data.verses.length - 1].n : 1;
+    applyFind();
+    document.dispatchEvent(new CustomEvent("mc:render", { detail: { canto: c } }));
+  }
+
+  function go(c, n, push) {
+    if (c !== current || !main.children.length) renderCanto(c);
+    const id = n ? `c${c}-${n}` : "";
+    if (push) history.replaceState(null, "", id ? "#" + id : "#c" + c);
+    const el = id && document.getElementById(id);
+    if (el) el.scrollIntoView(); else window.scrollTo(0, 0);
+  }
+
+  function fromHash() {
+    const m = location.hash.match(/^#c(\d)(?:-(\d+))?$/);
+    if (m) go(+m[1], m[2] ? +m[2] : 0, false); else renderCanto(1);
+  }
+
+  INDEX.forEach(c => {
+    const b = document.createElement("button");
+    b.type = "button"; b.dataset.c = c.n; b.lang = "te"; b.textContent = c.te;
+    b.title = `${c.en}: ${c.sub}`;
+    if (!MC[c.n]) b.disabled = true;
+    b.addEventListener("click", () => go(c.n, 0, true));
+    cantosEl.appendChild(b);
+  });
+
+  $("#jump").addEventListener("change", e => { const n = +e.target.value; if (n) go(current, n, true); });
+
+  function applyFind() {
+    const q = $("#find").value.trim().toLowerCase();
+    main.querySelectorAll(".verse").forEach(a => {
+      const hit = q && a.textContent.toLowerCase().includes(q);
+      a.classList.toggle("hit", !!hit);
+      a.hidden = !!q && !hit;
+    });
+    main.querySelectorAll(".section-label").forEach(h => h.hidden = !!q);
+  }
+  $("#find").addEventListener("input", applyFind);
+
+  const pp = $("#ppToggle");
+  try { if (localStorage.getItem("mc-nopp") === "1") pp.checked = false; } catch (e) {}
+  const setPP = () => { document.body.classList.toggle("nopp", !pp.checked); try { localStorage.setItem("mc-nopp", pp.checked ? "0" : "1"); } catch (e) {} };
+  pp.addEventListener("change", setPP); setPP();
+
+  // jumps to a verse land below the sticky bar, however tall it has wrapped
+  const barEl = document.querySelector(".bar");
+  const barH = () => document.documentElement.style.setProperty("--bar-h", barEl.offsetHeight + "px");
+  if (window.ResizeObserver) new ResizeObserver(barH).observe(barEl);
+  barH();
+
+  window.addEventListener("hashchange", fromHash);
+  fromHash();
+})();
+</script>
+
+<script>
+/* Recite: speaks a verse unit by unit with the device's Telugu voice (Web Speech API),
+   with repeats, echo pauses for the listener to answer, cumulative build-up, and looping. */
+(function () {
+  const synth = window.speechSynthesis;
+  const supported = !!synth && typeof window.SpeechSynthesisUtterance === "function";
+  const $ = s => document.querySelector(s);
+  const main = $("#main"), player = $("#player");
+  const ui = {
+    msg: $("#plMsg"), bar: $("#plBar"), verse: $("#plVerse"), line: $("#plLine"),
+    prev: $("#plPrev"), play: $("#plPlay"), next: $("#plNext"), opts: $("#plOpts"), close: $("#plClose"),
+    panel: $("#plPanel"), rate: $("#plRate"), rateOut: $("#plRateOut"), repeat: $("#plRepeat"),
+    after: $("#plAfter"), voice: $("#plVoice"), echo: $("#plEcho"), build: $("#plBuild")
+  };
+  const TE_NUM = n => String(n).replace(/[0-9]/g, d => "౦౧౨౩౪౫౬౭౮౯"[d]);
+  const reduced = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+  const ICON_PLAY = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 3.5 16.5 10 6 16.5z"/></svg>';
+  const ICON_PAUSE = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 4h3.6v12H5zM11.4 4H15v12h-3.6z"/></svg>';
+
+  /* settings, remembered per viewer */
+  const S = { rate: 0.85, repeat: 1, echo: false, build: false, after: "stop", voice: "" };
+  try { Object.assign(S, JSON.parse(localStorage.getItem("mc-recite") || "{}")); } catch (e) {}
+  const save = () => { try { localStorage.setItem("mc-recite", JSON.stringify(S)); } catch (e) {} };
+  ui.rate.value = S.rate; ui.repeat.value = String(S.repeat); ui.after.value = S.after;
+  ui.echo.checked = !!S.echo; ui.build.checked = !!S.build;
+  const showRate = () => { ui.rateOut.textContent = (+S.rate).toFixed(2) + "×"; };
+  showRate();
+
+  /* voices */
+  let teVoices = [], voicesSeen = false, tryAnyway = false, unlocked = false;
+  function refreshVoices() {
+    if (!supported) return;
+    let all = [];
+    try { all = synth.getVoices() || []; } catch (e) {}
+    if (all.length) voicesSeen = true;
+    teVoices = all.filter(v => /^te(?:[-_]|$)/i.test(v.lang || ""));
+    ui.voice.innerHTML = "";
+    const add = (val, label) => { const o = document.createElement("option"); o.value = val; o.textContent = label; ui.voice.appendChild(o); };
+    teVoices.forEach(v => add(v.voiceURI, v.name + (v.localService === false ? " (online)" : "")));
+    add("", teVoices.length ? "Device default for Telugu" : "No Telugu voice found");
+    ui.voice.value = teVoices.some(v => v.voiceURI === S.voice) ? S.voice : (teVoices[0] ? teVoices[0].voiceURI : "");
+  }
+  if (supported) {
+    refreshVoices();
+    if (synth.addEventListener) synth.addEventListener("voiceschanged", refreshVoices);
+    else synth.onvoiceschanged = refreshVoices;
+  }
+  const chosenVoice = () => teVoices.find(v => v.voiceURI === ui.voice.value) || null;
+
+  // Safari and iOS only let speech start inside a tap; a silent utterance there unlocks later ones.
+  function unlock() {
+    if (unlocked || !supported) return;
+    try { const u = new SpeechSynthesisUtterance(" "); u.volume = 0; u.lang = "te-IN"; synth.speak(u); } catch (e) {}
+    unlocked = true;
+  }
+
+  /* state */
+  let cur = null, playing = false, gen = 0, timer = 0, keepAlive = null;
+
+  function buildPlan(n) {
+    const plan = [];
+    const reps = Math.max(1, +S.repeat || 1);
+    if (S.build && n > 1) {
+      for (let k = 0; k < n; k++) {
+        for (let r = 0; r < reps; r++) {
+          for (let i = 0; i <= k; i++) {
+            plan.push({ t: "say", i, stage: k, r });
+            plan.push({ t: "gap", ms: i < k ? 250 : 500, stage: k });
+          }
+          if (S.echo) { plan.push({ t: "echo", from: 0, to: k, stage: k }); plan.push({ t: "gap", ms: 400, stage: k }); }
+        }
+      }
+    } else {
+      for (let i = 0; i < n; i++) {
+        for (let r = 0; r < reps; r++) {
+          plan.push({ t: "say", i, stage: i, r });
+          plan.push({ t: "gap", ms: r < reps - 1 ? 500 : 380, stage: i });
+        }
+        if (S.echo) { plan.push({ t: "echo", from: i, to: i, stage: i }); plan.push({ t: "gap", ms: 300, stage: i }); }
+      }
+    }
+    return plan;
+  }
+  const lastStage = () => cur ? cur.plan.reduce((m, p) => Math.max(m, p.stage), 0) : 0;
+  const firstOfStage = s => Math.max(0, cur.plan.findIndex(p => p.stage === s));
+  const stageNow = () => { const p = cur.plan[Math.min(cur.stepIdx, cur.plan.length - 1)]; return p ? p.stage : 0; };
+
+  function chunks(text) {
+    const t = text.replace(/\s+/g, " ").trim();
+    if (t.length <= 220) return [t];
+    const out = []; let buf = "";
+    for (const w of t.split(" ")) {
+      if (buf && (buf + " " + w).length > 180) { out.push(buf); buf = w; } else buf = buf ? buf + " " + w : w;
+    }
+    if (buf) out.push(buf);
+    return out;
+  }
+
+  function speakUnit(i, done) {
+    const my = gen;
+    const parts = chunks(cur.units[i].textContent);
+    const voice = chosenVoice();
+    const chars = parts.join(" ").length;
+    let k = 0, t0 = 0;
+    const watchdog = setTimeout(() => { if (my === gen) { synth.cancel(); setTimeout(finish, 80); } },
+      chars * 160 / S.rate + 5000);
+    function finish() {
+      clearTimeout(watchdog);
+      if (my !== gen) return;
+      if (t0) cur.dur[i] = performance.now() - t0;
+      done();
+    }
+    function next() {
+      if (my !== gen) return;
+      if (k >= parts.length) return finish();
+      const u = new SpeechSynthesisUtterance(parts[k++]);
+      u.lang = voice ? voice.lang : "te-IN";
+      if (voice) u.voice = voice;
+      u.rate = S.rate;
+      u.onstart = () => { if (my === gen && !t0) t0 = performance.now(); };
+      u.onend = () => { if (my === gen) next(); };
+      u.onerror = ev => {
+        if (my !== gen || ev.error === "interrupted" || ev.error === "canceled") return;
+        if (ev.error === "not-allowed") { clearTimeout(watchdog); pause(); setMsg("The voice needs a tap to start. Press play."); return; }
+        next();
+      };
+      keepAlive = u;          // some engines drop callbacks for utterances that get garbage-collected
+      if (!t0) t0 = performance.now();
+      synth.speak(u);
+    }
+    next();
+  }
+
+  function estimate(i) { return cur.units[i].textContent.length * 95 / S.rate; }
+  function echoMs(from, to) {
+    let sum = 0;
+    for (let i = from; i <= to; i++) sum += cur.dur[i] || estimate(i);
+    return Math.max(1800, sum * 1.1 + 1000);
+  }
+
+  function runStep() {
+    if (!playing || !cur) return;
+    const my = gen;
+    if (cur.stepIdx >= cur.plan.length) return verseEnd();
+    const st = cur.plan[cur.stepIdx];
+    const advance = () => { if (my !== gen) return; cur.stepIdx++; runStep(); };
+    if (st.t === "gap") { timer = setTimeout(advance, st.ms); return; }
+    if (st.t === "say") { stopCountdown(); mark(st.i, st.i, "say"); label(st); speakUnit(st.i, advance); return; }
+    if (st.t === "echo") { mark(st.from, st.to, "echo"); label(st); const ms = echoMs(st.from, st.to); countdown(ms); timer = setTimeout(advance, ms); }
+  }
+
+  function verseEnd() {
+    const my = gen;
+    clearMarks(); stopCountdown();
+    if (S.after === "loop") {
+      cur.stepIdx = 0; label(null, "Starting again");
+      timer = setTimeout(() => { if (my === gen) runStep(); }, 1500);
+      return;
+    }
+    if (S.after === "next") {
+      const nx = nextVerse(cur.art);
+      if (nx) { label(null, "Next verse"); timer = setTimeout(() => { if (my === gen) start(nx); }, 1500); return; }
+    }
+    playing = false; wake(false); cur.done = true;
+    label(null, "Finished. Press play to hear it again");
+    syncButtons();
+  }
+
+  function nextVerse(art) {
+    let el = art.nextElementSibling;
+    while (el && (!el.classList.contains("verse") || el.hidden)) el = el.nextElementSibling;
+    return el;
+  }
+
+  /* highlighting */
+  let marked = [];
+  function clearMarks() { marked.forEach(el => el.classList.remove("say", "echo")); marked = []; }
+  function mark(from, to, kind) {
+    clearMarks();
+    for (let i = from; i <= to; i++) { const el = cur.units[i]; if (el) { el.classList.add(kind); marked.push(el); } }
+    const first = cur.units[kind === "echo" ? to : from];
+    if (first) ensureVisible(first);
+  }
+  const navBar = document.querySelector(".bar");
+  function ensureVisible(el) {
+    const r = el.getBoundingClientRect();
+    const top = (navBar ? navBar.getBoundingClientRect().bottom : 90) + 8;
+    const bottom = window.innerHeight - (player.hidden ? 0 : player.offsetHeight) - 12;
+    if (r.top < top || r.bottom > bottom) el.scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" });
+  }
+
+  /* echo countdown */
+  function countdown(ms) {
+    const fill = ui.bar.firstElementChild;
+    ui.bar.hidden = false;
+    fill.style.transition = "none"; fill.style.width = "0%";
+    void fill.offsetWidth;
+    fill.style.transition = `width ${ms}ms linear`; fill.style.width = "100%";
+  }
+  function stopCountdown() {
+    const fill = ui.bar.firstElementChild;
+    ui.bar.hidden = true; fill.style.transition = "none"; fill.style.width = "0%";
+  }
+
+  /* labels */
+  function label(st, text) {
+    if (!cur) return;
+    ui.verse.textContent = `${TE_NUM(cur.c)}.${TE_NUM(cur.n)} · ${cur.metre}`;
+    const unit = cur.prose ? "phrase" : "line", units = cur.prose ? "phrases" : "lines";
+    const N = cur.units.length;
+    let t = text || "";
+    if (st && st.t === "say") {
+      t = S.build && N > 1
+        ? `${cur.prose ? "Phrases" : "Lines"} 1–${st.stage + 1} of ${N}`
+        : `${unit[0].toUpperCase() + unit.slice(1)} ${st.i + 1} of ${N}`;
+      if (+S.repeat > 1) t += ` · ${st.r + 1} of ${S.repeat}`;
+    } else if (st && st.t === "echo") {
+      t = st.from === st.to ? `Your turn: ${unit} ${st.from + 1}` : `Your turn: ${units} ${st.from + 1}–${st.to + 1}`;
+    }
+    ui.line.textContent = t;
+  }
+
+  function syncButtons() {
+    ui.play.innerHTML = playing ? ICON_PAUSE : ICON_PLAY;
+    ui.play.setAttribute("aria-label", playing ? "Pause" : "Play");
+    const off = !supported || !cur;
+    ui.play.disabled = off; ui.prev.disabled = off; ui.next.disabled = off;
+    main.querySelectorAll(".recite").forEach(b => {
+      const on = !!cur && b.closest(".verse") === cur.art;
+      b.setAttribute("aria-pressed", String(on));
+      b.lastChild.textContent = on && playing ? "Reciting" : "Recite";
+    });
+  }
+
+  function setMsg(text, button) {
+    ui.msg.textContent = text || "";
+    if (button) {
+      const b = document.createElement("button"); b.type = "button"; b.id = "plTry"; b.textContent = button.label;
+      b.addEventListener("click", button.onClick); ui.msg.appendChild(b);
+    }
+    ui.msg.hidden = !text;
+    sizePlayer();
+  }
+
+  /* player visibility */
+  function openPlayer() {
+    if (!player.hidden) return;
+    player.hidden = false; document.body.classList.add("has-player"); sizePlayer();
+  }
+  function sizePlayer() {
+    if (player.hidden) return;
+    const h = player.offsetHeight;
+    document.documentElement.style.setProperty("--pl-h", h + "px");
+    document.documentElement.style.scrollPaddingBottom = h + "px";
+  }
+  if (window.ResizeObserver) new ResizeObserver(sizePlayer).observe(player);
+
+  /* screen wake lock while reciting */
+  let lock = null;
+  async function wake(on) {
+    try {
+      if (on && !lock && navigator.wakeLock) { lock = await navigator.wakeLock.request("screen"); lock.addEventListener("release", () => { lock = null; }); }
+      else if (!on && lock) { const l = lock; lock = null; await l.release(); }
+    } catch (e) { lock = null; }
+  }
+  document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible" && playing) wake(true); });
+
+  function halt() { gen++; clearTimeout(timer); if (supported) synth.cancel(); stopCountdown(); }
+
+  function start(art) {
+    openPlayer();
+    if (!supported) {
+      setMsg("This viewer can't speak aloud. Open the page in Safari or Chrome to use Recite.");
+      cur = null; syncButtons(); return;
+    }
+    refreshVoices();
+    if (!teVoices.length && !tryAnyway) {
+      if (!voicesSeen) {           // voice list still loading: wait briefly, then decide
+        setMsg("Looking for a Telugu voice…");
+        let tries = 0;
+        const t = setInterval(() => {
+          refreshVoices();
+          if (teVoices.length || ++tries > 8) { clearInterval(t); voicesSeen = true; start(art); }
+        }, 200);
+        return;
+      }
+      setMsg("No Telugu voice is installed on this device. On iPhone, add one under Settings → Accessibility → Read & Speak (Spoken Content on older iOS) → Voices → Telugu. On Android, install Telugu for Google's speech engine in the text-to-speech settings.",
+        { label: "Try anyway", onClick: () => { tryAnyway = true; unlock(); start(art); } });
+      return;
+    }
+    setMsg("");
+    halt(); unlock();
+    if (cur && cur.art !== art) clearMarks();
+    const m = art.id.match(/^c(\d)-(\d+)$/);
+    const pad = art.querySelector(".padyam");
+    cur = { art, c: +m[1], n: +m[2], metre: (art.querySelector(".metre") || {}).textContent || "",
+      prose: pad.classList.contains("prose"), units: [...pad.querySelectorAll(".u")], plan: [], stepIdx: 0, dur: [] };
+    cur.plan = buildPlan(cur.units.length);
+    playing = true; wake(true); syncButtons(); label(null, "");
+    const my = gen;
+    timer = setTimeout(() => { if (my === gen) runStep(); }, 60);
+  }
+
+  function spokenStep() {   // the say or echo step at or before the current position
+    let i = Math.min(cur.stepIdx, cur.plan.length - 1);
+    while (i > 0 && cur.plan[i].t === "gap") i--;
+    return cur.plan[i];
+  }
+
+  function pause() {
+    if (!playing) return;
+    playing = false; halt(); wake(false); syncButtons();
+    if (!cur) return;
+    label(spokenStep());
+    ui.line.textContent = "Paused · " + ui.line.textContent;
+  }
+
+  function resume() {
+    if (!cur || !supported) return;
+    unlock();
+    if (cur.done || cur.stepIdx >= cur.plan.length) { cur.stepIdx = 0; cur.done = false; }
+    while (cur.stepIdx > 0 && cur.plan[cur.stepIdx].t === "gap") cur.stepIdx--;
+    halt(); playing = true; wake(true); syncButtons();
+    const my = gen;
+    timer = setTimeout(() => { if (my === gen) runStep(); }, 60);
+  }
+
+  function skip(dir) {
+    if (!cur) return;
+    if (cur.done) { cur.done = false; cur.stepIdx = 0; }
+    const s = stageNow();
+    let target = s + dir;
+    if (dir < 0 && cur.stepIdx > firstOfStage(s) + 1) target = s;   // back = restart this line first
+    target = Math.max(0, Math.min(lastStage(), target));
+    halt();
+    cur.stepIdx = firstOfStage(target);
+    const st = cur.plan[cur.stepIdx];
+    if (playing) { const my = gen; timer = setTimeout(() => { if (my === gen) runStep(); }, 80); }
+    else if (st) { mark(st.t === "say" ? st.i : st.from, st.t === "say" ? st.i : st.to, "say"); label(st); ui.line.textContent = "Paused · " + ui.line.textContent; }
+  }
+
+  function closePlayer() {
+    halt(); playing = false; wake(false); clearMarks();
+    cur = null; player.hidden = true; ui.panel.hidden = true; ui.opts.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("has-player");
+    document.documentElement.style.scrollPaddingBottom = "";
+    setMsg(""); syncButtons();
+  }
+
+  // settings that change the shape of the plan rebuild it at the current line
+  function replan() {
+    if (!cur) return;
+    const s = cur.done ? 0 : stageNow();
+    cur.plan = buildPlan(cur.units.length);
+    cur.stepIdx = firstOfStage(Math.min(s, lastStage()));
+    if (playing) { halt(); const my = gen; timer = setTimeout(() => { if (my === gen) runStep(); }, 80); }
+  }
+
+  main.addEventListener("click", e => {
+    const b = e.target.closest(".recite");
+    if (!b) return;
+    const art = b.closest(".verse");
+    if (cur && cur.art === art) { playing ? pause() : resume(); return; }
+    start(art);
+  });
+  ui.play.addEventListener("click", () => { playing ? pause() : resume(); });
+  ui.prev.addEventListener("click", () => skip(-1));
+  ui.next.addEventListener("click", () => skip(1));
+  ui.close.addEventListener("click", closePlayer);
+  ui.opts.addEventListener("click", () => {
+    const open = ui.panel.hidden;
+    ui.panel.hidden = !open; ui.opts.setAttribute("aria-expanded", String(open)); sizePlayer();
+  });
+  ui.rate.addEventListener("input", () => { S.rate = +ui.rate.value; showRate(); save(); });
+  ui.repeat.addEventListener("change", () => { S.repeat = +ui.repeat.value; save(); replan(); });
+  ui.echo.addEventListener("change", () => { S.echo = ui.echo.checked; save(); replan(); });
+  ui.build.addEventListener("change", () => { S.build = ui.build.checked; save(); replan(); });
+  ui.after.addEventListener("change", () => { S.after = ui.after.value; save(); });
+  ui.voice.addEventListener("change", () => { S.voice = ui.voice.value; save(); });
+
+  // switching cantos replaces the verses; stop if the one being recited is gone
+  document.addEventListener("mc:render", () => {
+    if (cur && !document.contains(cur.art)) { halt(); playing = false; wake(false); cur = null; marked = [];
+      label(null, ""); ui.verse.textContent = ""; ui.line.textContent = "Stopped"; }
+    syncButtons();
+  });
+
+  syncButtons();
+})();
+</script>
+
+<script id="study">
+/* Study tools, both off unless chosen: metre marks over the Telugu (laghu/guru, gaṇas,
+   yati, prāsa) and a fading-cue memory drill. The scansion is a port of tools/chandas.py. */
+(function () {
+  // ---------- scansion ----------
+  const VIRAMA = "్";
+  const isCons = ch => (ch >= "క" && ch <= "హ") || ch === "ౘ" || ch === "ౙ" || ch === "ౚ";
+  const VS_LONG = new Set([..."ాీూౄేైోౌౖ"]);
+  const VS_SHORT = new Set([..."ిుృెొౢౣ"]);
+  const IV_LONG = new Set([..."ఆఈఊౠౡఏఐఓఔ"]);
+  const IV_SHORT = new Set([..."అఇఉఋఌఎఒ"]);
+  const HEAVY = new Set(["ం", "ః"]);          // anusvāra, visarga
+  const LIGHT = new Set(["ఁ", "ఀ"]);          // ardhānusvāra: no weight
+  const IGNORE = new Set(["‌", "‍", "ౕ"]);
+
+  // Split each line into syllables and the text between them. Joining every part's
+  // text gives back the line exactly; weights are worked out over the whole verse.
+  function tokenize(lines) {
+    const syls = [], out = [];
+    lines.forEach((s, li) => {
+      const parts = [];
+      let i = 0, pending = [], pStart = -1, sep = "", atWord = true;
+      const n = s.length;
+      const flush = () => { if (sep) { parts.push({ t: sep }); sep = ""; } };
+      const dangle = end => {          // consonants left with a virama close the syllable before
+        if (!pending.length) return;
+        const txt = s.slice(pStart, end), last = parts[parts.length - 1];
+        if (syls.length) syls[syls.length - 1].coda.push(...pending);
+        if (!sep && last && last.syl) last.t += txt; else sep += txt;
+        pending = [];
+      };
+      while (i < n) {
+        const ch = s[i];
+        if (isCons(ch)) {
+          if (s[i + 1] === VIRAMA) {
+            if (!pending.length) pStart = i;
+            pending.push(ch); i += 2;
+            while (i < n && IGNORE.has(s[i])) i++;
+            continue;
+          }
+          flush();
+          const start = pending.length ? pStart : i;
+          const sy = { syl: true, onset: pending.concat(ch), long: false, heavy: false, coda: [], ws: atWord, line: li };
+          pending = []; atWord = false; i++;
+          if (i < n && VS_LONG.has(s[i])) { sy.long = true; i++; }
+          else if (i < n && VS_SHORT.has(s[i])) i++;
+          while (i < n && (HEAVY.has(s[i]) || LIGHT.has(s[i]) || IGNORE.has(s[i]))) { if (HEAVY.has(s[i])) sy.heavy = true; i++; }
+          sy.t = s.slice(start, i);
+          parts.push(sy); syls.push(sy);
+        } else if (IV_LONG.has(ch) || IV_SHORT.has(ch)) {
+          flush();
+          const start = pending.length ? pStart : i;
+          const sy = { syl: true, onset: pending, long: IV_LONG.has(ch), heavy: false, coda: [], ws: atWord, line: li };
+          pending = []; atWord = false; i++;
+          while (i < n && (HEAVY.has(s[i]) || LIGHT.has(s[i]))) { if (HEAVY.has(s[i])) sy.heavy = true; i++; }
+          sy.t = s.slice(start, i);
+          parts.push(sy); syls.push(sy);
+        } else if (IGNORE.has(ch)) {
+          const last = parts[parts.length - 1];
+          if (!pending.length) { if (!sep && last && last.syl) last.t += ch; else sep += ch; }
+          i++;
+        } else {
+          dangle(i);
+          sep += ch; atWord = true; i++;
+        }
+      }
+      dangle(n);
+      flush();
+      out.push(parts);
+    });
+    return { lines: out, syls };
+  }
+
+  function weigh(syls) {
+    return syls.map((sy, k) => {
+      if (sy.long || sy.heavy || sy.coda.length) return "U";
+      const nx = syls[k + 1];
+      // a conjunct with ర in it, or one opening the next word, may leave the syllable light
+      if (nx && nx.onset.length >= 2) return (nx.onset.slice(1).includes("ర") || nx.ws) ? "X" : "U";
+      return "I";
+    });
+  }
+
+  // ---------- metres ----------
+  const GANA = { y: "IUU", m: "UUU", t: "UUI", r: "UIU", j: "IUI", b: "UII", n: "III", s: "IIU", l: "I", g: "U" };
+  const GNAME = { y: "య", m: "మ", t: "త", r: "ర", j: "జ", b: "భ", n: "న", s: "స", lg: "వ", gg: "గగ", g: "గ" };
+  const VRTTA = {
+    "ఉత్పలమాల": ["brnbbrlg", [10]], "చంపకమాల": ["njbjjjr", [11]], "శార్దూలవిక్రీడితము": ["msjsttg", [13]],
+    "మత్తేభవిక్రీడితము": ["sbrnmylg", [14]], "మత్తకోకిల": ["rsjjbr", [11]], "తరలము": ["nbrsjjg", [12]],
+    "మాలిని": ["nnmyy", [9]], "స్రగ్ధర": ["mrbnyyy", [8, 15]], "మహాస్రగ్ధర": ["sttnsrrg", [9, 16]],
+    "పంచచామరము": ["jrjrjg", [10]], "పృథ్వీ": ["jsjsylg", [9]], "కవిరాజవిరాజితము": ["njjjjjjlg", [14]],
+    "మానిని": ["bbbbbbbg", []], "వనమయూరము": ["bjsngg", [9]]
+  };
+  const SURYA = ["III", "UI"], INDRA = ["IIII", "IIIU", "IIUI", "UII", "UIU", "UUI"], KANDA = ["UU", "UII", "IUI", "IIU", "IIII"];
+  const JATI = { S: SURYA, I: INDRA };
+
+  const fits = (a, b) => a === b || a === "X";
+  function parse(w, kinds) {            // split w into gaṇas of the given kinds; null if it can't be done
+    const got = [];
+    const rec = (pos, k) => {
+      if (k === kinds.length) return pos === w.length;
+      for (const g of kinds[k]) {
+        if (pos + g.length > w.length) continue;
+        let ok = true;
+        for (let q = 0; q < g.length && ok; q++) ok = fits(w[pos + q], g[q]);
+        if (ok) { got.push(g); if (rec(pos + g.length, k + 1)) return true; got.pop(); }
+      }
+      return false;
+    };
+    return rec(0, 0) ? got : null;
+  }
+  // try w as given, then with its last syllable read the other way (a licence at the end of a line)
+  function parseEnd(w, kinds, endAs) {
+    let g = parse(w, kinds);
+    if (!g && w.length && w[w.length - 1] !== endAs) g = parse(w.slice(0, -1) + endAs, kinds);
+    return g;
+  }
+  const spec = s => [...s].map(c => JATI[c]);
+
+  // Returns, per line, { ok, syl: [{w, g, gs, yt, yp, pr}] } plus a short description of the metre.
+  function analyse(lines, metre) {
+    const { lines: parts, syls } = tokenize(lines);
+    const W = weigh(syls);
+    const per = lines.map(() => "");
+    syls.forEach((sy, k) => { per[sy.line] += W[k]; });
+    const res = per.map(w => ({ ok: false, syl: [...w].map(x => ({ w: x === "I" ? "I" : "U", g: -1 })) }));
+    const fromGanas = (li, ganas, yati, prasa) => {
+      const w = per[li], out = [];
+      let pos = 0;
+      ganas.forEach((g, gi) => { for (let q = 0; q < g.length; q++, pos++) {
+        const raw = w[pos];
+        out.push({ w: raw === "X" ? g[q] : raw, g: gi, gs: q === 0 });
+      } });
+      (yati || []).forEach(([from, to]) => { if (out[from]) out[from].yp = true; if (out[to]) out[to].yt = true; });
+      if (prasa && out[1]) out[1].pr = true;
+      res[li] = { ok: true, syl: out };
+    };
+    const startOf = (ganas, gi) => ganas.slice(0, gi).reduce((a, g) => a + g.length, 0);
+    let desc = "";
+    if (VRTTA[metre]) {
+      const [letters, yatis] = VRTTA[metre];
+      const pat = [...letters].map(c => GANA[c]).join("");
+      const groups = [];                   // gaṇas, with trailing single syllables taken together (lg = va)
+      let i = 0;
+      while (i < letters.length) {
+        if ("lg".includes(letters[i])) { groups.push(letters.slice(i)); break; }
+        groups.push(letters[i]); i++;
+      }
+      const ganas = groups.map(g => [...g].map(c => GANA[c]).join(""));
+      desc = groups.map(g => GNAME[g] || g).join(" ") + (yatis.length ? " · యతి " + yatis.map(teNum).join(", ") : "");
+      per.forEach((w, li) => {
+        if (w.length !== pat.length) return;
+        for (let q = 0; q < pat.length - 1; q++) if (!fits(w[q], pat[q])) return;
+        fromGanas(li, ganas, yatis.map(y => [0, y - 1]), true);
+      });
+    } else if (metre === "కందము") {
+      desc = "౪ మాత్రల గణాలు, ౩ + ౫ ప్రతి అర్ధానికి";
+      per.forEach((w, li) => {
+        const even = li % 2 === 1;
+        const kinds = Array(even ? 5 : 3).fill(KANDA);
+        if (even) kinds[2] = ["IUI", "IIII"];
+        const g = even ? parseEnd(w, kinds, "U") : parse(w, kinds);
+        if (g) fromGanas(li, g, even ? [[0, startOf(g, 3)]] : [], true);
+      });
+    } else if (metre === "తేటగీతి" || metre === "ఆటవెలది" || metre === "సీసము" || metre === "ఉత్సాహ") {
+      const tg = "SIISS", av = ["SSSII", "SSSSS"];
+      const jati = (li, sp, yatiGanas) => {
+        const g = parseEnd(per[li], spec(sp), "I");
+        if (g) fromGanas(li, g, yatiGanas.map(([a, b]) => [startOf(g, a), startOf(g, b)]), false);
+        return !!g;
+      };
+      if (metre === "తేటగీతి") {
+        desc = "సూ ఇం ఇం సూ సూ · యతి ౪వ గణం";
+        per.forEach((_, li) => jati(li, tg, [[0, 3]]));
+      } else if (metre === "ఆటవెలది") {
+        desc = "సూ సూ సూ ఇం ఇం / సూ సూ సూ సూ సూ · యతి ౪వ గణం";
+        per.forEach((_, li) => jati(li, av[li % 2], [[0, 3]]));
+      } else if (metre === "ఉత్సాహ") {
+        desc = "సూ ×౭ + గురువు · యతి ౫వ గణం";
+        per.forEach((w, li) => {
+          const g = parse(w.slice(0, -1), Array(7).fill(SURYA));
+          if (g) fromGanas(li, g.concat([w[w.length - 1] === "I" ? "I" : "U"]), [[0, startOf(g, 4)]], false);
+        });
+      } else {
+        desc = "ఇం ×౬ సూ ×౨ · యతి ౩, ౭ గణాలు; ఎత్తుగీతి";
+        per.forEach((_, li) => { if (li < 4) jati(li, "IIIIIISS", [[0, 2], [4, 6]]); });
+        const tail = per.map((_, li) => li).filter(li => li >= 4);
+        const tgOk = tail.every(li => parseEnd(per[li], spec(tg), "I"));
+        tail.forEach((li, j) => jati(li, tgOk ? tg : av[j % 2], [[0, 3]]));
+      }
+    }
+    return { parts, res, desc };
+  }
+
+  const TE = "౦౧౨౩౪౫౬౭౮౯";
+  function teNum(n) { return String(n).replace(/[0-9]/g, d => TE[d]); }
+
+  window.MC_PROSODY = { tokenize, weigh, analyse, parse };
+
+  // ---------- page ----------
+  const $ = s => document.querySelector(s);
+  const main = $("#main");
+  if (!main) return;
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+  const ST = { marks: false, drill: false };
+  try { Object.assign(ST, JSON.parse(localStorage.getItem("mc-study") || "{}")); } catch (e) {}
+  const save = () => { try { localStorage.setItem("mc-study", JSON.stringify({ marks: ST.marks, drill: ST.drill })); } catch (e) {} };
+
+  // Render one line (or one prose phrase) as spans, keeping its text exactly as it was.
+  function lineHTML(parts, info) {
+    let html = "", k = 0, wordStart = true, first = true;
+    const syl = info ? info.syl : null;
+    parts.forEach((p, idx) => {
+      if (!p.syl) {
+        let cls = "sp";
+        if (syl && info.ok && k > 0 && k < syl.length && syl[k - 1].g === syl[k].g) cls += " g";
+        html += `<span class="${cls}">${esc(p.t)}</span>`;
+        if (/\s/.test(p.t)) wordStart = true;
+        return;
+      }
+      const s = syl ? syl[k] : null;
+      let cls = "ak";
+      cls += wordStart ? " w0" : " wr";
+      if (first) cls += " l0";
+      if (s && info.ok) { cls += " g"; if (s.gs) cls += " gs"; if (s.yt) cls += " yt"; if (s.yp) cls += " yp"; if (s.pr) cls += " pr"; }
+      const mark = s ? ` data-w="${s.w === "U" ? "U" : "|"}"` : "";
+      html += `<span class="${cls}"${mark}>${esc(p.t)}</span>`;
+      wordStart = false; first = false; k++;
+    });
+    return html;
+  }
+
+  function enrich(art) {
+    if (art.dataset.rich) return;
+    const pad = art.querySelector(".padyam");
+    if (!pad) return;
+    const metre = (art.querySelector(".metre") || {}).textContent || "";
+    if (pad.classList.contains("prose")) {
+      pad.querySelectorAll(".u").forEach(u => { u.innerHTML = lineHTML(tokenize([u.textContent]).lines[0], null); });
+    } else {
+      const units = [...pad.querySelectorAll(".ln")];
+      const a = analyse(units.map(u => u.textContent), metre);
+      units.forEach((u, i) => {
+        u.innerHTML = lineHTML(a.parts[i], a.res[i]);
+        u.classList.toggle("raw", !a.res[i].ok);
+      });
+      if (a.desc && !art.querySelector(".mpat")) {
+        const m = document.createElement("span");
+        m.className = "mpat"; m.lang = "te"; m.textContent = a.desc;
+        art.querySelector(".metre").after(m);
+      }
+    }
+    art.dataset.rich = "1";
+  }
+  function flatten(art) {
+    if (!art.dataset.rich) return;
+    art.querySelectorAll(".padyam .u").forEach(u => { u.textContent = u.textContent; u.classList.remove("raw", "peek"); });
+    delete art.dataset.rich;
+  }
+
+  // ---------- drill ----------
+  const STAGES = ["All", "First letters", "Line starts", "Nothing"];
+  function setStage(art, s) {
+    art.classList.remove("d1", "d2", "d3");
+    if (s) art.classList.add("d" + s);
+    art.querySelectorAll(".padyam .peek").forEach(u => u.classList.remove("peek"));
+    const bar = art.querySelector(".drillbar");
+    if (bar) bar.querySelectorAll("button").forEach((b, i) => b.setAttribute("aria-pressed", String(i === s)));
+  }
+  function startDrill(art) {
+    enrich(art);
+    art.classList.add("drilling");
+    const bar = document.createElement("div");
+    bar.className = "drillbar"; bar.setAttribute("role", "group");
+    bar.setAttribute("aria-label", "Memory drill for verse " + art.dataset.n);
+    bar.innerHTML = STAGES.map((s, i) => `<button type="button" data-s="${i}" aria-pressed="false">${s}</button>`).join("")
+      + `<span class="hint">Tap a line to peek</span>`;
+    art.querySelector(".vhead").after(bar);
+    setStage(art, 1);
+    art.querySelector(".drill-btn").setAttribute("aria-pressed", "true");
+  }
+  function stopDrill(art) {
+    art.classList.remove("drilling");
+    setStage(art, 0);
+    const bar = art.querySelector(".drillbar");
+    if (bar) bar.remove();
+    const b = art.querySelector(".drill-btn");
+    if (b) b.setAttribute("aria-pressed", "false");
+    if (!ST.marks && !ST.drill) flatten(art);
+  }
+  function drillButtons(art, on) {
+    let b = art.querySelector(".drill-btn");
+    if (on && !b) {
+      b = document.createElement("button");
+      b.type = "button"; b.className = "drill-btn"; b.textContent = "Drill";
+      b.setAttribute("aria-pressed", "false");
+      b.setAttribute("aria-label", "Memory drill for verse " + art.dataset.n);
+      art.querySelector(".recite").after(b);
+    } else if (!on && b) {
+      if (art.classList.contains("drilling")) stopDrill(art);
+      b.remove();
+    }
+  }
+
+  main.addEventListener("click", e => {
+    const t = e.target;
+    const db = t.closest(".drill-btn");
+    if (db) { const art = db.closest(".verse"); art.classList.contains("drilling") ? stopDrill(art) : startDrill(art); return; }
+    const sb = t.closest(".drillbar button");
+    if (sb) { setStage(sb.closest(".verse"), +sb.dataset.s); return; }
+    const u = t.closest(".verse.drilling .padyam .u");
+    if (u && u.closest(".verse").matches(".d1, .d2, .d3")) u.classList.toggle("peek");
+  });
+
+  // ---------- settings ----------
+  // verses are marked up as they come near the screen, so a long canto still opens at once
+  const io = "IntersectionObserver" in window ? new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { io.unobserve(e.target); if (ST.marks || ST.drill) enrich(e.target); } });
+  }, { rootMargin: "1500px 0px" }) : null;
+  function apply() {
+    document.body.classList.toggle("marks", ST.marks);
+    main.querySelectorAll(".verse").forEach(art => {
+      if (ST.marks || ST.drill) { if (io) io.observe(art); else enrich(art); }
+      else { if (io) io.unobserve(art); flatten(art); }
+      drillButtons(art, ST.drill);
+    });
+  }
+  const btn = $("#studyBtn"), panel = $("#studyPanel"), cMarks = $("#stMarks"), cDrill = $("#stDrill");
+  btn.addEventListener("click", () => {
+    const open = panel.hidden;
+    panel.hidden = !open; btn.setAttribute("aria-expanded", String(open));
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape" && !panel.hidden) { panel.hidden = true; btn.setAttribute("aria-expanded", "false"); btn.focus(); }
+  });
+  cMarks.checked = ST.marks; cDrill.checked = ST.drill;
+  cMarks.addEventListener("change", () => { ST.marks = cMarks.checked; save(); apply(); });
+  cDrill.addEventListener("change", () => { ST.drill = cDrill.checked; save(); apply(); });
+  document.addEventListener("mc:render", apply);
+  apply();
+})();
+</script>
+</body>
+</html>
