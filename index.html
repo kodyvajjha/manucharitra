@@ -246,6 +246,11 @@ body.marks:not(.story) .padyam .raw .ak::before { opacity: .45 }
   padding: .5em .85em .55em }
 .bal.bare { font-size: var(--fs); left: var(--x); top: var(--y) }
 .bal.bare > span { padding: 0 }
+.sfx { position: absolute; left: var(--x); top: var(--y); margin: 0; z-index: 3; pointer-events: none; white-space: nowrap;
+  transform: translate(-50%, -50%) rotate(var(--rot)); font: 400 var(--fs)/1 var(--te-hand); color: #ffd23f; letter-spacing: .03em;
+  text-shadow: .045em 0 0 var(--ack-ink), -.045em 0 0 var(--ack-ink), 0 .045em 0 var(--ack-ink), 0 -.045em 0 var(--ack-ink),
+    .032em .032em 0 var(--ack-ink), -.032em -.032em 0 var(--ack-ink), .032em -.032em 0 var(--ack-ink), -.032em .032em 0 var(--ack-ink),
+    .08em .1em 0 var(--ack-ink) }
 @container (max-width: 520px) {
   .cap { position: static; width: auto; border-width: 0 0 3px; box-shadow: none; font-size: 13px; padding: .45em .7em }
   .bal { font-size: 11px; left: var(--nx); top: var(--ny) }
@@ -253,7 +258,7 @@ body.marks:not(.story) .padyam .raw .ak::before { opacity: .45 }
   .bal-fill::after { width: var(--nlen); transform: rotate(var(--nang)) }
   .bal-fill { filter: drop-shadow(1.5px 0 0 var(--ack-ink)) drop-shadow(-1.5px 0 0 var(--ack-ink)) drop-shadow(0 1.5px 0 var(--ack-ink)) drop-shadow(0 -1.5px 0 var(--ack-ink)) }
   .bal.bare { font-size: calc(var(--fs) * 1.12) }
-  .bal.bare .gl { display: none }
+  .bal .gl, .bal.bare .gl { display: none }
 }
 
 /* story mode: the poem with its English beside it, the notes under the English, and the
@@ -318,7 +323,7 @@ body.story .render { grid-column: 2; grid-row: 2; grid-template-columns: minmax(
   <p>The Telugu text is Peddana's <i>Svārociṣa-manusambhavamu</i>. Cantos 1–4 were taken from a printed edition, corrected against the text on Telugu Wikisource, and then collated line by line with the text published by Andhra Bharati. Where the two disagree, the reading that keeps both the metre and the sense is printed, and the variants worth knowing are given in the notes. Cantos 5 and 6 follow Andhra Bharati, transcribed twice and the two copies compared. Every verse has been scanned against its metre, and the few lines that still do not fit are marked in the notes. The pratipadārtham splits each verse after sandhi and glosses it phrase by phrase in the order of the Telugu; the rendering below it is freer.</p>
   <p>Verses 5–7 of the first canto are Koundinya Vajjha's own translation. The rest is new work done for this edition.</p>
   <p>Recite reads a verse aloud line by line with your device's own Telugu voice. It speaks the words plainly; it does not sing them to a rāgam the way padyams are recited.</p>
-  <p>Story, in the bar at the top, sets each poem beside its English with the notes underneath, and puts away the word-by-word gloss and the study tools, so the cantos read straight through, with the pictures. The pictures mark the turns of the story. The words in their captions and speech balloons are set by the page, not painted, so the Telugu is Peddana's own.</p>
+  <p>Story, in the bar at the top, sets each poem beside its English with the notes underneath, and puts away the word-by-word gloss and the study tools, so the cantos read straight through, with the pictures. The pictures mark the turns of the story. They were painted with an image model, from prompts written out of the poem's own descriptions; the words in their captions and speech balloons are set by the page, not painted, so the Telugu is Peddana's own.</p>
   <p>Study, in the bar at the top, has two optional layers, both off until you turn them on; the page remembers your choice on this device. Metre marks scan every line by rule: U over a long syllable, | over a short one, a line over each gaṇa, the yati letters underlined and the prāsa letter in blue. A line whose marks are faint does not fit its metre as printed. The memory drill fades a verse in stages, to the first letter of each word, then of each line, then nothing, and with metre marks on, the marks stay behind as a skeleton.</p>
 </footer>
 
@@ -420,12 +425,13 @@ body.story .render { grid-column: 2; grid-row: 2; grid-template-columns: minmax(
       const dx = b.tx - x, dy = (b.ty - y) * s.h / s.w;
       return [Math.max(0, Math.hypot(dx, dy) - 1.4).toFixed(2) + "cqw", (Math.atan2(dy, dx) * 180 / Math.PI).toFixed(1) + "deg"];
     };
+    const br = t => esc(t || "").replace(/\n/g, "<br>");
     const bals = (s.balloons || []).map(b => {
-      if (b.bare) return `<div class="bal bare" style="--x:${b.x}%;--y:${b.y}%;--fs:${b.fs}cqw"><span class="bal-text">` +
-        `<span lang="te">${esc(b.te)}</span><span class="gl">${esc(b.en)}</span></span></div>`;
+      const words = `<span lang="te">${br(b.te)}</span>` + (b.en ? `<span class="gl">${br(b.en)}</span>` : "");
+      if (b.sfx) return `<p class="sfx" lang="te" style="--x:${b.x}%;--y:${b.y}%;--fs:${b.fs}cqw;--rot:${b.rot || 0}deg">${br(b.te)}</p>`;
+      if (b.bare) return `<div class="bal bare" style="--x:${b.x}%;--y:${b.y}%;--fs:${b.fs}cqw"><span class="bal-text">${words}</span></div>`;
       const [len, ang] = tail(b.x, b.y, b);
       const nx = b.nx ?? b.x, ny = b.ny ?? b.y, [nlen, nang] = tail(nx, ny, b);
-      const words = `<span lang="te">${esc(b.te)}</span><span class="gl">${esc(b.en)}</span>`;
       return `<div class="bal" style="--x:${b.x}%;--y:${b.y}%;--len:${len};--ang:${ang};--nx:${nx}%;--ny:${ny}%;--nlen:${nlen};--nang:${nang}">` +
         `<span class="bal-fill" aria-hidden="true">${words}</span><span class="bal-text">${words}</span></div>`;
     }).join("");
