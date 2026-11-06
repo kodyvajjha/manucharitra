@@ -194,16 +194,16 @@ body.has-player footer { padding-bottom: calc(4rem + var(--pl-h, 8rem)) }
 .mpat { font-family: var(--te); font-size: var(--step--1); color: var(--ink-soft) }
 body:not(.marks) .mpat { display: none }
 
-body.marks .padyam:not(.prose) { line-height: 3 }
-body.marks .padyam .ak, body.marks .padyam .sp { position: relative }
-body.marks .padyam .ak::before { content: attr(data-w); position: absolute; left: 0; right: 0; bottom: 100%; margin-bottom: .3em; text-align: center; text-indent: 0;
+body.marks:not(.story) .padyam:not(.prose) { line-height: 3 }
+body.marks:not(.story) .padyam .ak, body.marks:not(.story) .padyam .sp { position: relative }
+body.marks:not(.story) .padyam .ak::before { content: attr(data-w); position: absolute; left: 0; right: 0; bottom: 100%; margin-bottom: .3em; text-align: center; text-indent: 0;
   font: 700 .54em/1 var(--en); color: var(--myrobalan); pointer-events: none }
-body.marks .padyam .g::after { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; margin-bottom: .8em;
+body.marks:not(.story) .padyam .g::after { content: ""; position: absolute; left: 0; right: 0; bottom: 100%; margin-bottom: .8em;
   border-top: 1px solid color-mix(in srgb, var(--myrobalan) 55%, transparent); pointer-events: none }
-body.marks .padyam .gs::after { left: .22em }
-body.marks .padyam .yt, body.marks .padyam .yp { text-decoration: underline 2px var(--madder); text-underline-offset: .3em; text-decoration-skip-ink: none }
-body.marks .padyam .pr { color: var(--indigo) }
-body.marks .padyam .raw .ak::before { opacity: .45 }
+body.marks:not(.story) .padyam .gs::after { left: .22em }
+body.marks:not(.story) .padyam .yt, body.marks:not(.story) .padyam .yp { text-decoration: underline 2px var(--madder); text-underline-offset: .3em; text-decoration-skip-ink: none }
+body.marks:not(.story) .padyam .pr { color: var(--indigo) }
+body.marks:not(.story) .padyam .raw .ak::before { opacity: .45 }
 
 .drill-btn { display: inline-flex; align-items: center; align-self: center; font: inherit; font-size: var(--step--1); color: var(--indigo);
   background: none; border: 1px solid var(--rule); border-radius: 3px; padding: .25rem .7rem; cursor: pointer }
@@ -242,27 +242,34 @@ body.marks .padyam .raw .ak::before { opacity: .45 }
 .bal-text { position: relative }
 .bal [lang="te"] { display: block; font-family: var(--te-hand); line-height: 1.4 }
 .bal .gl { display: block; font: 700 .6em/1.2 var(--hand); margin-top: .1em; letter-spacing: .02em }
+.cap.strip { position: static; width: auto; border-width: 0 0 3px; box-shadow: none; font-size: clamp(13px, 1.75cqw, 19px);
+  padding: .5em .85em .55em }
+.bal.bare { font-size: var(--fs); left: var(--x); top: var(--y) }
+.bal.bare > span { padding: 0 }
 @container (max-width: 520px) {
   .cap { position: static; width: auto; border-width: 0 0 3px; box-shadow: none; font-size: 13px; padding: .45em .7em }
   .bal { font-size: 11px; left: var(--nx); top: var(--ny) }
   .bal > span { padding: .5em 1.1em .55em }
   .bal-fill::after { width: var(--nlen); transform: rotate(var(--nang)) }
   .bal-fill { filter: drop-shadow(1.5px 0 0 var(--ack-ink)) drop-shadow(-1.5px 0 0 var(--ack-ink)) drop-shadow(0 1.5px 0 var(--ack-ink)) drop-shadow(0 -1.5px 0 var(--ack-ink)) }
+  .bal.bare { font-size: calc(var(--fs) * 1.12) }
+  .bal.bare .gl { display: none }
 }
 
-/* story mode: the English and the notes, read straight through, with the pictures */
+/* story mode: the poem with its English beside it, the notes under the English, and the
+   pictures. The word-by-word gloss and the study layers are put away. */
 .story-btn[aria-pressed="true"] { color: var(--band-ink); background: var(--band); border-color: var(--band) }
-body.story .padyam, body.story .pp, body.story .metre, body.story .recite, body.story .drill-btn, body.story .drillbar,
-body.story .mpat, body.story .pp-toggle, body.story #studyBtn, body.story #studyPanel { display: none !important }
-body.story .verse { grid-template-columns: minmax(0, 1fr); padding-block: 1.3rem; gap: .5rem }
-body.story .num { font-size: var(--step-0) }
-body.story .render { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 1rem 2.5rem }
-body.story .tr { font-size: 1.22rem; line-height: 1.65 }
+body.story .pp, body.story .drill-btn, body.story .drillbar, body.story .mpat, body.story .pp-toggle,
+body.story #studyBtn, body.story #studyPanel { display: none !important }
+body.story .verse { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem 3rem }
+body.story .padyam { grid-column: 1; grid-row: 2 }
+body.story .render { grid-column: 2; grid-row: 2; grid-template-columns: minmax(0, 1fr); gap: .9rem; align-content: start }
 
 @media (max-width: 760px) {
   :root { --step-4: 2.6rem; --step-3: 1.9rem }
-  body.story .render { grid-template-columns: minmax(0, 1fr) }
   .verse, .render { grid-template-columns: minmax(0, 1fr); gap: 1rem }
+  body.story .verse { grid-template-columns: minmax(0, 1fr) }
+  body.story .padyam, body.story .render { grid-column: 1; grid-row: auto }
   .pp { border-top: 1px dashed var(--rule); padding-top: 1rem; grid-template-columns: minmax(0, 1fr); gap: 0 }
   .pp dt { margin-top: .65rem }
   .pp dt:first-of-type { margin-top: 0 }
@@ -311,7 +318,7 @@ body.story .tr { font-size: 1.22rem; line-height: 1.65 }
   <p>The Telugu text is Peddana's <i>Svārociṣa-manusambhavamu</i>. Cantos 1–4 were taken from a printed edition, corrected against the text on Telugu Wikisource, and then collated line by line with the text published by Andhra Bharati. Where the two disagree, the reading that keeps both the metre and the sense is printed, and the variants worth knowing are given in the notes. Cantos 5 and 6 follow Andhra Bharati, transcribed twice and the two copies compared. Every verse has been scanned against its metre, and the few lines that still do not fit are marked in the notes. The pratipadārtham splits each verse after sandhi and glosses it phrase by phrase in the order of the Telugu; the rendering below it is freer.</p>
   <p>Verses 5–7 of the first canto are Koundinya Vajjha's own translation. The rest is new work done for this edition.</p>
   <p>Recite reads a verse aloud line by line with your device's own Telugu voice. It speaks the words plainly; it does not sing them to a rāgam the way padyams are recited.</p>
-  <p>Story, in the bar at the top, hides the Telugu, the word-by-word gloss and the study tools, and leaves the English and the notes to be read straight through, with the pictures. The pictures mark the turns of the story. They are drawn in code, in ink outline and flat colour after the Indian picture-book comics of the 1970s and 80s, and each character is drawn from a single model, so that Pravara and Varūthinī look the same in every panel. The two in canto 2 are the first.</p>
+  <p>Story, in the bar at the top, sets each poem beside its English with the notes underneath, and puts away the word-by-word gloss and the study tools, so the cantos read straight through, with the pictures. The pictures mark the turns of the story. The words in their captions and speech balloons are set by the page, not painted, so the Telugu is Peddana's own.</p>
   <p>Study, in the bar at the top, has two optional layers, both off until you turn them on; the page remembers your choice on this device. Metre marks scan every line by rule: U over a long syllable, | over a short one, a line over each gaṇa, the yati letters underlined and the prāsa letter in blue. A line whose marks are faint does not fit its metre as printed. The memory drill fades a verse in stages, to the first letter of each word, then of each line, then nothing, and with metre marks on, the marks stay behind as a skeleton.</p>
 </footer>
 
@@ -407,12 +414,15 @@ body.story .tr { font-size: 1.22rem; line-height: 1.65 }
   // A picture panel. Balloon tails are sized in container units (cqw), so they keep pointing
   // at the speaker's mouth at any width: dx, dy are % of the panel's width.
   function panelHTML(s) {
-    const cap = s.caption ? `<p class="cap" style="--x:${s.cap.x}%;--y:${s.cap.y}%;--w:${s.cap.w}%">${esc(s.caption)}</p>` : "";
+    const cap = !s.caption ? "" : s.cap ? `<p class="cap" style="--x:${s.cap.x}%;--y:${s.cap.y}%;--w:${s.cap.w}%">${esc(s.caption)}</p>`
+      : `<p class="cap strip">${esc(s.caption)}</p>`;
     const tail = (x, y, b) => {
       const dx = b.tx - x, dy = (b.ty - y) * s.h / s.w;
       return [Math.max(0, Math.hypot(dx, dy) - 1.4).toFixed(2) + "cqw", (Math.atan2(dy, dx) * 180 / Math.PI).toFixed(1) + "deg"];
     };
     const bals = (s.balloons || []).map(b => {
+      if (b.bare) return `<div class="bal bare" style="--x:${b.x}%;--y:${b.y}%;--fs:${b.fs}cqw"><span class="bal-text">` +
+        `<span lang="te">${esc(b.te)}</span><span class="gl">${esc(b.en)}</span></span></div>`;
       const [len, ang] = tail(b.x, b.y, b);
       const nx = b.nx ?? b.x, ny = b.ny ?? b.y, [nlen, nang] = tail(nx, ny, b);
       const words = `<span lang="te">${esc(b.te)}</span><span class="gl">${esc(b.en)}</span>`;
@@ -498,6 +508,7 @@ body.story .tr { font-size: 1.22rem; line-height: 1.65 }
     storyBtn.setAttribute("aria-pressed", String(on));
     if (on) { $("#studyPanel").hidden = true; $("#studyBtn").setAttribute("aria-expanded", "false"); }
     try { localStorage.setItem("mc-story", on ? "1" : "0"); } catch (e) {}
+    document.dispatchEvent(new CustomEvent("mc:story", { detail: on }));
   };
   let story0 = false;
   try { story0 = localStorage.getItem("mc-story") === "1"; } catch (e) {}
@@ -1215,6 +1226,7 @@ body.story .tr { font-size: 1.22rem; line-height: 1.65 }
     }
   }
 
+  document.addEventListener("mc:story", e => { if (e.detail) main.querySelectorAll(".verse.drilling").forEach(stopDrill); });
   main.addEventListener("click", e => {
     const t = e.target;
     const db = t.closest(".drill-btn");
